@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checklist</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;font:16px system-ui,sans-serif;color:#111;background:#fff}main{max-width:720px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}button{border:1px solid #111;background:#fff;padding:6px 12px;cursor:pointer;font:inherit}.row{display:flex;align-items:center;gap:10px;border-bottom:1px solid #ddd;padding:10px 0}.row input{width:18px;height:18px}.text{flex:1}.time{color:#666;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+<header><strong>Checklist</strong><button id="add">Add</button></header>
+<section id="list"></section>
+</main>
+<script>
+const KEY="simple-checklist-v1";
+let items=JSON.parse(localStorage.getItem(KEY)||"[]");
+function save(){localStorage.setItem(KEY,JSON.stringify(items));render()}
+function render(){
+ const list=document.getElementById("list");list.innerHTML="";
+ items.forEach((item,i)=>{
+  const row=document.createElement("div");row.className="row";
+  if(item.done){
+   const time=document.createElement("span");time.className="time";time.textContent=item.time;row.append(time);
+  }else{
+   const cb=document.createElement("input");cb.type="checkbox";
+   cb.onchange=()=>{items[i].done=true;items[i].time=new Date().toLocaleString();save()};
+   row.append(cb);
+  }
+  const text=document.createElement("span");text.className="text";text.textContent=item.text;row.append(text);
+  list.append(row);
+ });
+}
+document.getElementById("add").onclick=()=>{
+ const text=prompt("Note");if(text&&text.trim()){items.push({text:text.trim(),done:false,time:null});save()}
+};
+render();
+</script>
+</body>
+</html>
